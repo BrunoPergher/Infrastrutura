@@ -1,0 +1,31 @@
+---
+- name: Deploy Docker container stack locally on Windows via WSL
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: Copy docker-compose.yml
+      copy:
+        src: /mnt/c/Users/bruno/Documents/GitHub/Infrastrutura/docker-compose.yml
+        dest: /home/pergher/docker-compose.yml
+
+    - name: Copy backend project files
+      synchronize:
+        src: /mnt/c/Users/bruno/Documents/GitHub/Infrastrutura/backend/
+        dest: /home/pergher/backend/
+
+    - name: Copy frontend project files
+      synchronize:
+        src: /mnt/c/Users/bruno/Documents/GitHub/Infrastrutura/frontend/
+        dest: /home/pergher/frontend/
+
+    - name: Copy PostgreSQL env file
+      copy:
+        src: /mnt/c/Users/bruno/Documents/GitHub/Infrastrutura/postgres/.env.postgres
+        dest: /home/pergher/postgres/.env.postgres
+
+    - name: Start Docker Compose services
+      command: docker-compose -f /home/pergher/docker-compose.yml up -d
+      args:
+        chdir: /home/pergher/
